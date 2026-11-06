@@ -14,6 +14,8 @@ def say(msg):
 data = requests.post(f"https://{config.DOMAIN}/oauth/token", json={
     "grant_type": "client_credentials", "client_id": config.M2M_CLIENT_ID,
     "client_secret": config.M2M_CLIENT_SECRET, "audience": config.AUDIENCE}).json()
+if "access_token" not in data:
+    raise SystemExit(f"Token request failed: {data}")
 headers = {"Authorization": "Bearer " + data["access_token"]}
 say(f"Got M2M token, expires_in = {data['expires_in']} seconds")
 

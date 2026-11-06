@@ -6,7 +6,7 @@
  * ends up as  https://securenova.example/agent_id
  */
 exports.onExecutePostLogin = async (event, api) => {
-  const namespace = "https://securenova.example/";
+  const namespace = "https://securenova.local/";
   const agentId = "securenova-support-agent-01";   // identifies which AI agent acts for this user
 
   api.idToken.setCustomClaim(namespace + "agent_id", agentId);

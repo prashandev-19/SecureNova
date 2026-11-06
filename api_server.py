@@ -7,13 +7,11 @@ import uvicorn
 from fastapi import Depends, FastAPI , HTTPException
 from fastapi.security import HTTPAuthorizationCredentials , HTTPBearer
 from jwt import PyJWKClient
-
 import config
 app =FastAPI(title="SecureNova AI API")
 bearer=HTTPBearer(auto_error=False)
 ISSUER=f"https://{config.DOMAIN}"
-_jwks = PyJWKClient(f"https://{config.DOMAIN}/.well-known.jwks.json") if config.DOMAIN
-else None
+_jwks = PyJWKClient(f"https://{config.DOMAIN}/.well-known.jwks.json") if config.DOMAIN else None
 
 
 def get_key(token):
@@ -27,7 +25,7 @@ def require_scope(scope):
             raise HTTPException(status_code=401, detail="missing token")
         try:
             #Checks signature(RS256)
-            claims = jwt.decode(creds.credentials, get_key(creds.credentials),algorithms=["RS256"],audience=config.AUDIENCE,
+            claims = jwt.decode(cred.credentials, get_key(cred.credentials),algorithms=["RS256"],audience=config.AUDIENCE,
                                 issuer=ISSUER)
         except jwt.PyJWTError:
             raise HTTPException(status_code=401,detail="invalid or expired token")
@@ -40,7 +38,7 @@ def require_scope(scope):
 
 @app.get("/chat")
 def chat(claims: dict= Depends(require_scope("read:ai-data"))):
-    return {"reply":"Hello form the AI chat API"}
+    return {"reply": "Hello form the AI chat API"}
 
 @app.get("/admin")
 def admin(claims: dict= Depends(require_scope("write:admin"))):
